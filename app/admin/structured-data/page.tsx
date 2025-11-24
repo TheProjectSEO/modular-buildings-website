@@ -478,7 +478,7 @@ export default function StructuredDataPage() {
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
                       <pre className="text-sm text-green-400 font-mono">
-                        {JSON.stringify(schema.data, null, 2)}
+                        {JSON.stringify(schema.json_ld, null, 2)}
                       </pre>
                     </div>
                     <div className="flex items-center gap-2 mt-4">
