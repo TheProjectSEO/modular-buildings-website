@@ -252,7 +252,7 @@ export default function StructuredDataPage() {
   }
 
   const copyToClipboard = (schema: StructuredDataWithPage) => {
-    const jsonString = JSON.stringify(schema.data, null, 2)
+    const jsonString = JSON.stringify(schema.json_ld, null, 2)
     navigator.clipboard.writeText(jsonString)
     setCopied(schema.id)
     setTimeout(() => setCopied(null), 2000)
