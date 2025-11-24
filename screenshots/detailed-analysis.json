@@ -1,0 +1,418 @@
+{
+  "report_metadata": {
+    "date": "2025-11-21",
+    "test_url": "http://localhost:3004",
+    "testing_tool": "Playwright",
+    "browser": "Chromium",
+    "viewport": "1280x720",
+    "total_pages_tested": 5,
+    "success_rate": "60%"
+  },
+  "pages_tested": [
+    {
+      "page_name": "Homepage",
+      "url": "http://localhost:3004/",
+      "status_code": 200,
+      "status": "WORKING",
+      "severity": "CRITICAL_ISSUES",
+      "load_time_seconds": 2,
+      "content_metrics": {
+        "total_images": 1,
+        "loaded_images": 0,
+        "broken_images": 1,
+        "links_count": 23,
+        "headings": {
+          "h1": 1,
+          "h2": 3,
+          "h3": 1
+        },
+        "text_content_characters": 18601
+      },
+      "sections_found": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "sections": 4,
+        "footer": true,
+        "forms": 0
+      },
+      "console_status": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "working_elements": [
+        "Header with logo",
+        "Navigation menu (6 items: Home, Containers, Prefabricated Buildings, Modular Cabins, Projects, Contact)",
+        "Hero section with headline and CTA buttons",
+        "Product categories section heading",
+        "Featured products section heading",
+        "Statistics section (1986 Established, 130+ Countries, 45,000 m2, 1000+ Projects)",
+        "Call-to-action section 'Ready to Start Your Project?'",
+        "Contact Us Today button",
+        "Footer with all company information",
+        "Social media icons (Facebook, Twitter, Instagram, LinkedIn)"
+      ],
+      "broken_elements": [
+        "Hero banner image (external Karmod CDN image not loading)"
+      ],
+      "missing_elements": [
+        "Product category grid/cards",
+        "Featured products carousel/grid",
+        "Product images"
+      ],
+      "broken_images": [
+        {
+          "src": "http://localhost:3004/_next/image?url=https%3A%2F%2Fwww.karmod.com%2Fstorage%2Fimages%2F01-slider%2Fmodular-prefab-office-buildings.webp&w=3840&q=75",
+          "alt": "Prefabricated & Modular Building Solutions",
+          "reason": "Cross-origin image loading issue"
+        }
+      ],
+      "recommendations": [
+        "Fix hero image loading by using local assets instead of external CDN",
+        "Populate featured products section with data from database",
+        "Implement image lazy loading for performance",
+        "Add proper image cache headers"
+      ]
+    },
+    {
+      "page_name": "Category - Containers",
+      "url": "http://localhost:3004/category/containers",
+      "status_code": 404,
+      "status": "BROKEN",
+      "severity": "CRITICAL",
+      "load_time_seconds": 2,
+      "content_metrics": {
+        "total_images": 0,
+        "loaded_images": 0,
+        "broken_images": 0,
+        "links_count": 22,
+        "headings": {
+          "h1": 1,
+          "h2": 1,
+          "h3": 1
+        },
+        "text_content_characters": 13822
+      },
+      "sections_found": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "sections": 0,
+        "footer": true,
+        "forms": 0
+      },
+      "console_status": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "working_elements": [
+        "Header and navigation",
+        "Footer with links",
+        "404 fallback page"
+      ],
+      "broken_elements": [
+        "Route handler returning 404",
+        "Dynamic route [slug] not finding category"
+      ],
+      "missing_elements": [
+        "Category title",
+        "Product grid",
+        "Product filters",
+        "Breadcrumb with category name",
+        "Category description",
+        "Product cards"
+      ],
+      "root_cause": "Database schema accessibility issue - tables in 'todoAAPP' schema not accessible via Supabase anon API key. Need migration to 'public' schema.",
+      "recommendations": [
+        "Run database migration script to move tables to public schema",
+        "Verify Supabase API key permissions",
+        "Test dynamic routes with sample category data",
+        "Implement custom error page with helpful suggestions",
+        "Add fallback category listing from homepage",
+        "Implement search functionality as alternative"
+      ]
+    },
+    {
+      "page_name": "Product - Prefabricated Office",
+      "url": "http://localhost:3004/products/prefabricated-office-560-m2",
+      "status_code": 404,
+      "status": "BROKEN",
+      "severity": "CRITICAL",
+      "load_time_seconds": 2,
+      "content_metrics": {
+        "total_images": 0,
+        "loaded_images": 0,
+        "broken_images": 0,
+        "links_count": 22,
+        "headings": {
+          "h1": 1,
+          "h2": 1,
+          "h3": 1
+        },
+        "text_content_characters": 13887
+      },
+      "sections_found": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "sections": 0,
+        "footer": true,
+        "forms": 0
+      },
+      "console_status": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "working_elements": [
+        "Header and navigation",
+        "Footer",
+        "404 fallback page"
+      ],
+      "broken_elements": [
+        "Product route returning 404",
+        "Dynamic route [slug] not finding product"
+      ],
+      "missing_elements": [
+        "Product title",
+        "Product description",
+        "Product images/gallery",
+        "Product specifications",
+        "Price information",
+        "Related products",
+        "Breadcrumb navigation",
+        "Technical specs section"
+      ],
+      "root_cause": "Same database schema issue as category pages - products table not accessible via Supabase anon API",
+      "recommendations": [
+        "Fix database schema (migrate to public schema)",
+        "Create comprehensive product page template",
+        "Add product images with gallery/zoom",
+        "Implement specs comparison tool",
+        "Add customer testimonials",
+        "Create related/recommended products section",
+        "Add product rating system"
+      ]
+    },
+    {
+      "page_name": "Projects",
+      "url": "http://localhost:3004/projects",
+      "status_code": 200,
+      "status": "WORKING",
+      "severity": "MAJOR_ISSUES",
+      "load_time_seconds": 2,
+      "content_metrics": {
+        "total_images": 1,
+        "loaded_images": 0,
+        "broken_images": 1,
+        "links_count": 23,
+        "headings": {
+          "h1": 1,
+          "h2": 1,
+          "h3": 1
+        },
+        "text_content_characters": 14969
+      },
+      "sections_found": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "sections": 1,
+        "footer": true,
+        "forms": 0
+      },
+      "console_status": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "working_elements": [
+        "Page loads successfully",
+        "Header and navigation",
+        "Hero section with title 'Our Projects'",
+        "Breadcrumb navigation (Home > Projects)",
+        "Section describing 'Completed Projects Worldwide'",
+        "Footer with all information"
+      ],
+      "broken_elements": [
+        "Hero banner image not loading (placeholder-banner.jpg)"
+      ],
+      "missing_elements": [
+        "Project data",
+        "Project cards/grid",
+        "Project images",
+        "Project descriptions",
+        "Project categories/filters",
+        "Client information",
+        "Before/after images"
+      ],
+      "empty_state": "Shows 'No projects available at the moment'",
+      "root_cause": "No data in projects table or data not being fetched from database",
+      "recommendations": [
+        "Add project data to database",
+        "Implement project management backend",
+        "Create project card component with images",
+        "Add project filtering by category/type",
+        "Implement project carousel/pagination",
+        "Add case study download functionality",
+        "Include project metrics (timeline, budget, ROI)"
+      ]
+    },
+    {
+      "page_name": "Contact",
+      "url": "http://localhost:3004/contact",
+      "status_code": 200,
+      "status": "WORKING",
+      "severity": "MEDIUM_ISSUES",
+      "load_time_seconds": 2,
+      "content_metrics": {
+        "total_images": 1,
+        "loaded_images": 0,
+        "broken_images": 1,
+        "links_count": 23,
+        "headings": {
+          "h1": 1,
+          "h2": 2,
+          "h3": 5
+        },
+        "text_content_characters": 19532
+      },
+      "sections_found": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "sections": 2,
+        "footer": true,
+        "forms": 1
+      },
+      "console_status": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "working_elements": [
+        "Page loads successfully",
+        "Header and navigation",
+        "Hero section with title 'Contact Us'",
+        "Breadcrumb navigation",
+        "'Get in Touch' section with contact info",
+        "Phone: +90 (312) 394 10 20",
+        "Email: info@karmod.com",
+        "Address: Ankara, Turkey with service area note",
+        "Business hours clearly displayed",
+        "Contact form with fields: Name, Company, Phone, Email, Country, City, Message",
+        "Form submission button",
+        "Privacy policy checkbox",
+        "Footer"
+      ],
+      "broken_elements": [
+        "Hero banner image not loading (placeholder-banner.jpg)",
+        "Map integration not implemented"
+      ],
+      "missing_elements": [
+        "Google Maps or Mapbox showing office location",
+        "Form submission confirmation message",
+        "Error handling for form submission",
+        "reCAPTCHA or anti-spam protection",
+        "Alternative contact methods (WhatsApp, Telegram)"
+      ],
+      "form_status": "Form present but submission handler not tested",
+      "recommendations": [
+        "Integrate Google Maps or Mapbox showing office in Ankara",
+        "Implement form submission handler with validation",
+        "Add success/error messages after submission",
+        "Implement reCAPTCHA v3 for spam protection",
+        "Add loading spinner during form submission",
+        "Set up auto-reply email to users",
+        "Add WhatsApp and Telegram contact buttons",
+        "Implement form field validation with user-friendly messages"
+      ]
+    }
+  ],
+  "summary_statistics": {
+    "total_pages": 5,
+    "working_pages": 3,
+    "broken_pages": 2,
+    "success_rate_percentage": 60,
+    "total_images_count": 4,
+    "total_loaded_images": 0,
+    "total_broken_images": 4,
+    "total_links": 113,
+    "total_forms": 1,
+    "total_console_errors": 0,
+    "total_console_warnings": 0
+  },
+  "critical_issues": [
+    {
+      "issue": "Dynamic route 404 errors",
+      "affected_pages": [
+        "Category - Containers",
+        "Product - Prefabricated Office"
+      ],
+      "severity": "CRITICAL",
+      "root_cause": "Database schema accessibility - tables in 'todoAAPP' schema not accessible via Supabase anon API",
+      "solution": "Run database migration script to move tables to 'public' schema",
+      "estimated_fix_time_hours": 0.5
+    },
+    {
+      "issue": "Missing hero images",
+      "affected_pages": [
+        "Homepage",
+        "Projects",
+        "Contact"
+      ],
+      "severity": "HIGH",
+      "root_cause": "Next.js Image Optimization proxy not resolving external URLs correctly",
+      "solution": "Use local image assets instead of external CDN URLs",
+      "estimated_fix_time_hours": 1
+    },
+    {
+      "issue": "No project data displayed",
+      "affected_pages": [
+        "Projects"
+      ],
+      "severity": "HIGH",
+      "root_cause": "Projects table empty or not being fetched",
+      "solution": "Add sample project data to database or populate projects table",
+      "estimated_fix_time_hours": 1
+    },
+    {
+      "issue": "Map not integrated",
+      "affected_pages": [
+        "Contact"
+      ],
+      "severity": "MEDIUM",
+      "root_cause": "Placeholder text visible 'Map Placeholder - Integrate Google Maps or Mapbox'",
+      "solution": "Integrate Google Maps or Mapbox API",
+      "estimated_fix_time_hours": 1
+    },
+    {
+      "issue": "No featured products",
+      "affected_pages": [
+        "Homepage"
+      ],
+      "severity": "MEDIUM",
+      "root_cause": "Products section empty",
+      "solution": "Fetch and display featured products from database",
+      "estimated_fix_time_hours": 2
+    }
+  ],
+  "technical_findings": {
+    "framework": "Next.js 14",
+    "routing": "App Router with dynamic routes",
+    "database": "Supabase PostgreSQL",
+    "image_handling": "Next.js Image Optimization",
+    "styling": "Tailwind CSS",
+    "components": "React functional components",
+    "browser_tested": "Chromium",
+    "network_errors": 0,
+    "javascript_errors": 0,
+    "semantic_html": "Good structure with header, nav, main, section, footer"
+  },
+  "estimated_total_fix_time": {
+    "low_estimate_hours": 2,
+    "high_estimate_hours": 4,
+    "developer_experience_level": "Intermediate Next.js developer"
+  },
+  "production_readiness": "NOT READY - Critical issues must be resolved",
+  "screenshots_location": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/",
+  "test_results_json": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/test-results.json",
+  "full_report_markdown": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/WEBSITE_VERIFICATION_REPORT.md"
+}

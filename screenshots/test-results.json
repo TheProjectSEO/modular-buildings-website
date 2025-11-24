@@ -1,0 +1,175 @@
+[
+  {
+    "page": "Homepage",
+    "url": "/",
+    "success": true,
+    "details": {
+      "statusCode": 200,
+      "images": {
+        "total": 1,
+        "loaded": 0
+      },
+      "brokenImages": [
+        {
+          "src": "http://localhost:3004/_next/image?url=https%3A%2F%2Fwww.karmod.com%2Fstorage%2Fimages%2F01-slider%2Fmodular-prefab-office-buildings.webp&w=3840&q=75",
+          "alt": "Prefabricated & Modular Building Solutions"
+        }
+      ],
+      "links": 23,
+      "headings": {
+        "h1": 1,
+        "h2": 3,
+        "h3": 1
+      },
+      "content": {
+        "loaded": true,
+        "characterCount": 18601
+      },
+      "sections": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "section": 4,
+        "footer": true,
+        "form": 0
+      },
+      "screenshot": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/homepage.png"
+    }
+  },
+  {
+    "page": "Category - Containers",
+    "url": "/category/containers",
+    "success": true,
+    "details": {
+      "statusCode": 404,
+      "images": {
+        "total": 0,
+        "loaded": 0
+      },
+      "links": 22,
+      "headings": {
+        "h1": 1,
+        "h2": 1,
+        "h3": 1
+      },
+      "content": {
+        "loaded": true,
+        "characterCount": 13822
+      },
+      "sections": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "section": 0,
+        "footer": true,
+        "form": 0
+      },
+      "screenshot": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/category---containers.png"
+    }
+  },
+  {
+    "page": "Product - Prefabricated Office",
+    "url": "/products/prefabricated-office-560-m2",
+    "success": true,
+    "details": {
+      "statusCode": 404,
+      "images": {
+        "total": 0,
+        "loaded": 0
+      },
+      "links": 22,
+      "headings": {
+        "h1": 1,
+        "h2": 1,
+        "h3": 1
+      },
+      "content": {
+        "loaded": true,
+        "characterCount": 13887
+      },
+      "sections": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "section": 0,
+        "footer": true,
+        "form": 0
+      },
+      "screenshot": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/product---prefabricated-office.png"
+    }
+  },
+  {
+    "page": "Projects",
+    "url": "/projects",
+    "success": true,
+    "details": {
+      "statusCode": 200,
+      "images": {
+        "total": 1,
+        "loaded": 0
+      },
+      "brokenImages": [
+        {
+          "src": "http://localhost:3004/_next/image?url=%2Fplaceholder-banner.jpg&w=3840&q=75",
+          "alt": "Our Projects"
+        }
+      ],
+      "links": 23,
+      "headings": {
+        "h1": 1,
+        "h2": 1,
+        "h3": 1
+      },
+      "content": {
+        "loaded": true,
+        "characterCount": 14969
+      },
+      "sections": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "section": 1,
+        "footer": true,
+        "form": 0
+      },
+      "screenshot": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/projects.png"
+    }
+  },
+  {
+    "page": "Contact",
+    "url": "/contact",
+    "success": true,
+    "details": {
+      "statusCode": 200,
+      "images": {
+        "total": 1,
+        "loaded": 0
+      },
+      "brokenImages": [
+        {
+          "src": "http://localhost:3004/_next/image?url=%2Fplaceholder-banner.jpg&w=3840&q=75",
+          "alt": "Contact Us"
+        }
+      ],
+      "links": 23,
+      "headings": {
+        "h1": 1,
+        "h2": 2,
+        "h3": 5
+      },
+      "content": {
+        "loaded": true,
+        "characterCount": 19532
+      },
+      "sections": {
+        "header": true,
+        "nav": true,
+        "main": true,
+        "section": 2,
+        "footer": true,
+        "form": 1
+      },
+      "screenshot": "/Users/adityaaman/Desktop/schema_Creation/skills/karmod-website/screenshots/contact.png"
+    }
+  }
+]
