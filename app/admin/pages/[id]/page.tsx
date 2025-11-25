@@ -31,16 +31,18 @@ import {
   CheckCircle
 } from 'lucide-react'
 import {
-  getPageById,
-  getPageTypes,
+  getPage,
   updatePage,
+  Page
+} from '@/lib/admin-api'
+import {
+  getPageTypes,
   createFAQ,
   updateFAQ,
   deleteFAQ,
   createStructuredData,
   updateStructuredData,
   deleteStructuredData,
-  Page,
   PageType,
   FAQ,
   StructuredData
@@ -95,30 +97,32 @@ export default function EditPagePage() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const [pageData, typesData] = await Promise.all([
-        getPageById(pageId),
+      const [pageResult, typesData] = await Promise.all([
+        getPage(pageId),
         getPageTypes()
       ])
 
-      if (pageData) {
+      if (pageResult.page) {
+        const pageData = pageResult.page
         setPage(pageData)
         setFormData({
-          title: pageData.title,
+          title: pageData.meta_title || pageData.slug,
           slug: pageData.slug,
           page_type_id: pageData.page_type_id,
           status: pageData.status,
           content: pageData.content || '',
           meta_title: pageData.meta_title || '',
           meta_description: pageData.meta_description || '',
-          canonical_url: pageData.canonical_url || '',
-          og_title: pageData.og_title || '',
-          og_description: pageData.og_description || '',
-          og_image: pageData.og_image || '',
-          is_featured: pageData.is_featured,
-          sort_order: pageData.sort_order
+          canonical_url: '',
+          og_title: '',
+          og_description: '',
+          og_image: '',
+          is_featured: pageData.is_featured || false,
+          sort_order: 0
         })
-        setFaqs(pageData.faqs || [])
-        setSchemas(pageData.structured_data || [])
+        // FAQs and schemas will be loaded separately if needed
+        setFaqs([])
+        setSchemas([])
       } else {
         setError('Page not found')
       }
@@ -140,29 +144,31 @@ export default function EditPagePage() {
     try {
       const oldPageData = page ? { ...page } : null
       const result = await updatePage(pageId, {
-        ...formData,
-        published_at: formData.status === 'published' && page?.status !== 'published'
-          ? new Date().toISOString()
-          : page?.published_at
+        slug: formData.slug,
+        page_type_id: formData.page_type_id,
+        meta_title: formData.meta_title,
+        meta_description: formData.meta_description,
+        content: formData.content,
+        is_active: formData.status === 'published'
       })
 
-      if (result.success) {
+      if (result.page) {
         // Log the update to audit trail
         await logUpdate({
           entityType: 'page',
           entityId: pageId,
-          entityTitle: result.data?.title || formData.title,
+          entityTitle: result.page.meta_title || formData.meta_title || formData.slug,
           oldData: oldPageData || undefined,
           newData: formData,
           ...userInfo
         })
         setSuccess('Page saved successfully')
         setTimeout(() => setSuccess(null), 3000)
-      } else {
-        setError(result.error || 'Failed to save page')
+        // Reload page data
+        loadData()
       }
-    } catch (err) {
-      setError('An error occurred while saving')
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while saving')
     } finally {
       setSaving(false)
     }

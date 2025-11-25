@@ -23,7 +23,8 @@ import {
   AlertTriangle,
   Archive
 } from 'lucide-react'
-import { getPages, getPageTypes, deletePage, Page, PageType } from '@/lib/supabase'
+import { getPages, deletePage, Page } from '@/lib/admin-api'
+import { getPageTypes, PageType } from '@/lib/supabase'
 import { logDelete, getUserInfoForAudit } from '@/lib/audit-utils'
 import { useAuth } from '@/components/admin/AuthWrapper'
 
@@ -50,13 +51,12 @@ export default function PagesListPage() {
     try {
       const [pagesData, typesData] = await Promise.all([
         getPages({
-          status: statusFilter === 'all' ? undefined : statusFilter,
-          page_type_id: pageTypeFilter === 'all' ? undefined : pageTypeFilter
+          page_type: pageTypeFilter === 'all' ? undefined : pageTypeFilter
         }),
         getPageTypes()
       ])
-      setPages(pagesData.data)
-      setTotalCount(pagesData.count)
+      setPages(pagesData.pages)
+      setTotalCount(pagesData.pages.length)
       setPageTypes(typesData)
     } catch (err) {
       console.error('Error loading data:', err)
@@ -68,25 +68,25 @@ export default function PagesListPage() {
 
   const handleDelete = async (id: string) => {
     const pageToDelete = pages.find(p => p.id === id)
-    const result = await deletePage(id)
-    if (result.success) {
+    try {
+      await deletePage(id)
       // Log the page deletion
       await logDelete({
         entityType: 'page',
         entityId: id,
-        entityTitle: pageToDelete?.title || 'Page',
+        entityTitle: pageToDelete?.meta_title || pageToDelete?.title || 'Page',
         deletedData: pageToDelete,
         ...userInfo
       })
       setPages(pages.filter(p => p.id !== id))
       setDeleteConfirm(null)
-    } else {
-      setError(result.error || 'Failed to delete page')
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete page')
     }
   }
 
   const filteredPages = pages.filter(page =>
-    page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (page.meta_title || page.slug).toLowerCase().includes(searchQuery.toLowerCase()) ||
     page.slug.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -217,7 +217,7 @@ export default function PagesListPage() {
                         href={`/admin/pages/${page.id}`}
                         className="text-lg font-medium text-gray-900 hover:text-blue-600 truncate"
                       >
-                        {page.title}
+                        {page.meta_title || page.slug}
                       </Link>
                       {page.is_featured && (
                         <Badge variant="primary" className="text-xs">Featured</Badge>
