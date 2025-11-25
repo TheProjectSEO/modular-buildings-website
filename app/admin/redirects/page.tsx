@@ -39,7 +39,7 @@ export default function RedirectsPage() {
   const [formData, setFormData] = useState({
     source_url: '',
     target_url: '',
-    redirect_type: 301 as 301 | 302 | 307 | 308,
+    redirect_type: 301 as number,
     is_active: true
   })
 
@@ -139,8 +139,8 @@ export default function RedirectsPage() {
 
   const startEdit = (redirect: Redirect) => {
     setFormData({
-      source_url: redirect.source_url,
-      target_url: redirect.target_url,
+      source_url: redirect.source_path,
+      target_url: redirect.destination_path,
       redirect_type: redirect.redirect_type,
       is_active: redirect.is_active
     })
@@ -149,8 +149,8 @@ export default function RedirectsPage() {
 
   const filteredRedirects = redirects.filter(redirect => {
     const matchesSearch =
-      redirect.source_url.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      redirect.target_url.toLowerCase().includes(searchQuery.toLowerCase())
+      redirect.source_path.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      redirect.destination_path.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesType = typeFilter === 'all' || redirect.redirect_type.toString() === typeFilter
     return matchesSearch && matchesType
   })
@@ -360,11 +360,11 @@ export default function RedirectsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-2">
                       <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded truncate max-w-[200px]">
-                        {redirect.source_url}
+                        {redirect.source_path}
                       </code>
                       <ArrowRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
                       <code className="text-sm font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded truncate max-w-[200px]">
-                        {redirect.target_url}
+                        {redirect.destination_path}
                       </code>
                     </div>
                     <div className="flex items-center gap-2 text-sm">

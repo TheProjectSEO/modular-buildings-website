@@ -232,7 +232,7 @@ export default function PagesListPage() {
                     </div>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span>Updated: {formatDate(page.updated_at)}</span>
-                      {page.view_count > 0 && (
+                      {page.view_count && page.view_count > 0 && (
                         <span className="flex items-center gap-1">
                           <Eye className="h-3 w-3" /> {page.view_count} views
                         </span>

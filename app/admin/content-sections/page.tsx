@@ -202,9 +202,9 @@ export default function ContentSectionsPage() {
     setFormData({
       page_id: section.page_id,
       section_type: section.section_type,
-      title: section.title || '',
-      content: section.content || '',
-      data: JSON.stringify(section.data || {}, null, 2),
+      title: section.heading || '',
+      content: JSON.stringify(section.content || {}),
+      data: JSON.stringify(section.content || {}, null, 2),
       is_active: section.is_active
     })
     setEditingId(section.id)
@@ -212,7 +212,7 @@ export default function ContentSectionsPage() {
 
   const filteredSections = sections.filter(section => {
     const matchesSearch =
-      section.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      section.heading?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       section.section_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
       section.page?.title?.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesPage = pageFilter === 'all' || section.page_id === pageFilter
@@ -451,8 +451,8 @@ export default function ContentSectionsPage() {
                           <Badge variant="primary">
                             {SECTION_TYPES.find(t => t.value === section.section_type)?.label || section.section_type}
                           </Badge>
-                          {section.title && (
-                            <span className="font-medium text-gray-900">{section.title}</span>
+                          {section.heading && (
+                            <span className="font-medium text-gray-900">{section.heading}</span>
                           )}
                           {!section.is_active && <Badge variant="gray">Inactive</Badge>}
                         </div>
@@ -467,16 +467,11 @@ export default function ContentSectionsPage() {
 
                       {expandedSection === section.id && (
                         <div className="px-3 pb-3 border-t border-gray-100">
-                          {section.content && (
-                            <div className="mt-3 p-3 bg-gray-50 rounded text-sm">
-                              <p className="text-gray-700 whitespace-pre-wrap">{section.content}</p>
-                            </div>
-                          )}
-                          {section.data && Object.keys(section.data).length > 0 && (
+                          {section.content && typeof section.content === 'object' && Object.keys(section.content).length > 0 && (
                             <div className="mt-3">
-                              <p className="text-xs text-gray-500 mb-1">Data:</p>
+                              <p className="text-xs text-gray-500 mb-1">Content Data:</p>
                               <pre className="p-2 bg-gray-900 text-green-400 rounded text-xs overflow-x-auto">
-                                {JSON.stringify(section.data, null, 2)}
+                                {JSON.stringify(section.content, null, 2)}
                               </pre>
                             </div>
                           )}
