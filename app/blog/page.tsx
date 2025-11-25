@@ -6,106 +6,12 @@ import { getPlaceholderImage } from '@/lib/placeholder-image'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export const metadata: Metadata = {
   title: 'Blog',
   description: 'Read the latest articles about prefabricated buildings, modular construction trends, and industry insights from Modular Buildings Co experts.',
 }
-
-interface BlogPost {
-  id: string
-  title: string
-  slug: string
-  excerpt: string
-  content: string
-  category: string
-  author: string
-  date: string
-  readTime: number
-  image: string
-  featured: boolean
-}
-
-const blogPosts: BlogPost[] = [
-  {
-    id: '1',
-    title: 'The Future of Modular Construction: 2024 Trends & Innovations',
-    slug: 'future-modular-construction-2024',
-    excerpt: 'Explore the latest technological advancements transforming the modular construction industry and what they mean for your next project.',
-    content: 'The modular construction industry is experiencing rapid growth and innovation. From advanced robotics to AI-driven design tools, technology is revolutionizing how we build...',
-    category: 'Industry Trends',
-    author: 'Mehmet Johnson',
-    date: '2024-11-15',
-    readTime: 8,
-    image: getPlaceholderImage(800, 400, 'Modular Construction 2024'),
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'How Prefabricated Buildings Are Reducing Construction Time by 50%',
-    slug: 'prefab-construction-time-savings',
-    excerpt: 'Discover how our prefabricated construction methods are revolutionizing project timelines and delivering faster results without compromising quality.',
-    content: 'Traditional construction projects can take months or even years to complete. But with prefabricated building solutions, we are achieving remarkable time savings...',
-    category: 'Construction Tips',
-    author: 'Sarah Johnson',
-    date: '2024-11-08',
-    readTime: 6,
-    image: getPlaceholderImage(800, 400, 'Construction Time Savings'),
-    featured: true,
-  },
-  {
-    id: '3',
-    title: 'Sustainable Modular Buildings: Building a Greener Future',
-    slug: 'sustainable-modular-buildings',
-    excerpt: 'Learn how modular construction is leading the way in sustainable building practices and environmental responsibility in the construction industry.',
-    content: 'Environmental concerns are driving changes across all industries, and construction is no exception. Modular building techniques offer numerous sustainability benefits...',
-    category: 'Sustainability',
-    author: 'Emma Green',
-    date: '2024-10-25',
-    readTime: 7,
-    image: getPlaceholderImage(800, 400, 'Green Buildings'),
-    featured: false,
-  },
-  {
-    id: '4',
-    title: 'Case Study: Dubai School Project - Completing 14 Classrooms in 45 Days',
-    slug: 'dubai-school-project-case-study',
-    excerpt: 'See how Modular Buildings Co delivered a state-of-the-art school facility for Dubai in record time using advanced modular construction techniques.',
-    content: 'The Dubai Education Development Authority faced a challenge: build a new school to accommodate 900 students in minimal time. Here\'s how we delivered...',
-    category: 'Case Studies',
-    author: 'Modular Buildings Co Team',
-    date: '2024-10-10',
-    readTime: 9,
-    image: getPlaceholderImage(800, 400, 'Dubai School Case Study'),
-    featured: true,
-  },
-  {
-    id: '5',
-    title: 'Cost Comparison: Modular vs. Traditional Construction Methods',
-    slug: 'modular-vs-traditional-costs',
-    excerpt: 'Breaking down the financial advantages of modular construction and how it can deliver better ROI for your building projects.',
-    content: 'When planning a construction project, cost is always a primary consideration. Let\'s compare modular construction with traditional methods and see where the savings come from...',
-    category: 'Industry Analysis',
-    author: 'Robert Schmidt',
-    date: '2024-09-28',
-    readTime: 8,
-    image: getPlaceholderImage(800, 400, 'Cost Analysis'),
-    featured: false,
-  },
-  {
-    id: '6',
-    title: 'Quality Certifications: Why Modular Buildings Co\'s Standards Matter',
-    slug: 'quality-certifications-matter',
-    excerpt: 'Understanding the international certifications and quality standards that ensure every Modular Buildings Co building meets the highest safety and performance requirements.',
-    content: 'In the construction industry, quality assurance is paramount. Modular Buildings Co holds multiple international certifications that guarantee the excellence of our products and services...',
-    category: 'Quality & Safety',
-    author: 'Michael Chen',
-    date: '2024-09-15',
-    readTime: 6,
-    image: getPlaceholderImage(800, 400, 'Quality Standards'),
-    featured: false,
-  },
-]
 
 const faqItems: FAQItem[] = [
   {
@@ -134,16 +40,39 @@ const faqItems: FAQItem[] = [
   },
 ]
 
-export default function BlogPage() {
+async function getBlogPosts() {
+  if (!supabaseAdmin) {
+    return []
+  }
+
+  const { data: posts, error } = await supabaseAdmin
+    .from('blog_posts')
+    .select(`
+      *,
+      author:authors(*)
+    `)
+    .eq('is_published', true)
+    .order('published_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching blog posts:', error)
+    return []
+  }
+
+  return posts || []
+}
+
+export default async function BlogPage() {
   const breadcrumbs = [
     { label: 'Home', href: '/' },
     { label: 'Blog', href: '/blog' },
   ]
 
-  const featuredPosts = blogPosts.filter(post => post.featured)
-  const regularPosts = blogPosts.filter(post => !post.featured)
+  const blogPosts = await getBlogPosts()
+  const featuredPosts = blogPosts.filter(post => post.is_featured)
+  const regularPosts = blogPosts.filter(post => !post.is_featured)
 
-  const categories = [...new Set(blogPosts.map(post => post.category))]
+  const categories = [...new Set(blogPosts.map(post => post.category).filter(Boolean))]
 
   return (
     <>
@@ -163,130 +92,184 @@ export default function BlogPage() {
             Read our latest in-depth articles on modular construction trends, case studies, and industry innovations.
           </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            {featuredPosts.slice(0, 2).map((post) => (
-              <div
-                key={post.id}
-                className="group card overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                {/* Post Image */}
-                <div className="relative h-64 overflow-hidden bg-gray-200">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge variant="warning">{post.category}</Badge>
-                  </div>
-                </div>
-
-                {/* Post Content */}
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-3 line-clamp-2 group-hover:text-mb-warning transition-colors">
-                    <Link href={`/blog/${post.slug}`}>
-                      {post.title}
-                    </Link>
-                  </h3>
-
-                  <p className="text-mb-gray mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
-
-                  {/* Meta Information */}
-                  <div className="flex items-center gap-4 text-sm text-mb-gray border-t border-mb-border-gray pt-4">
-                    <span>{post.author}</span>
-                    <span>•</span>
-                    <span>{post.date}</span>
-                    <span>•</span>
-                    <span>{post.readTime} min read</span>
-                  </div>
-
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-block mt-4 text-mb-warning font-semibold hover:underline"
-                  >
-                    Read More →
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Category Filter */}
-          <div className="mb-12">
-            <h3 className="text-lg font-semibold mb-4 text-mb-dark">
-              Browse by Category
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              <button className="px-4 py-2 bg-mb-navy text-white rounded-mb font-medium hover:bg-mb-navy/90 transition-colors">
-                All Articles
-              </button>
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  className="px-4 py-2 border border-mb-border-gray text-mb-dark rounded-mb font-medium hover:border-mb-warning hover:text-mb-warning transition-colors"
+          {featuredPosts.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+              {featuredPosts.slice(0, 2).map((post) => (
+                <div
+                  key={post.id}
+                  className="group card overflow-hidden hover:shadow-xl transition-shadow"
                 >
-                  {category}
-                </button>
+                  {/* Post Image */}
+                  <div className="relative h-64 overflow-hidden bg-gray-200">
+                    <Image
+                      src={post.featured_image || getPlaceholderImage(800, 400, post.title)}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {post.category && (
+                      <div className="absolute top-4 left-4">
+                        <Badge variant="warning">{post.category}</Badge>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Post Content */}
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold mb-3 line-clamp-2 group-hover:text-mb-warning transition-colors">
+                      <Link href={`/blog/${post.slug}`}>
+                        {post.title}
+                      </Link>
+                    </h3>
+
+                    {post.excerpt && (
+                      <p className="text-mb-gray mb-4 line-clamp-3">
+                        {post.excerpt}
+                      </p>
+                    )}
+
+                    {/* Meta Information */}
+                    <div className="flex items-center gap-4 text-sm text-mb-gray border-t border-mb-border-gray pt-4">
+                      {post.author && (
+                        <>
+                          <div className="flex items-center gap-2">
+                            {post.author.avatar_url && (
+                              <Image
+                                src={post.author.avatar_url}
+                                alt={post.author.name}
+                                width={24}
+                                height={24}
+                                className="rounded-full"
+                              />
+                            )}
+                            <span>{post.author.name}</span>
+                          </div>
+                          <span>•</span>
+                        </>
+                      )}
+                      {post.published_at && (
+                        <>
+                          <span>{new Date(post.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                          <span>•</span>
+                        </>
+                      )}
+                      {post.read_time && <span>{post.read_time} min read</span>}
+                    </div>
+
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="inline-block mt-4 text-mb-warning font-semibold hover:underline"
+                    >
+                      Read More →
+                    </Link>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
+          ) : (
+            <p className="text-mb-gray mb-16">No featured posts available at the moment. Check back soon!</p>
+          )}
+
+          {/* Category Filter */}
+          {categories.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-lg font-semibold mb-4 text-mb-dark">
+                Browse by Category
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                <button className="px-4 py-2 bg-mb-navy text-white rounded-mb font-medium hover:bg-mb-navy/90 transition-colors">
+                  All Articles
+                </button>
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    className="px-4 py-2 border border-mb-border-gray text-mb-dark rounded-mb font-medium hover:border-mb-warning hover:text-mb-warning transition-colors"
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* All Posts Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularPosts.map((post) => (
-              <div key={post.id} className="group card overflow-hidden hover:shadow-lg transition-shadow">
-                {/* Post Image */}
-                <div className="relative h-48 overflow-hidden bg-gray-200">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <Badge variant="gray">{post.category}</Badge>
+          {regularPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {regularPosts.map((post) => (
+                <div key={post.id} className="group card overflow-hidden hover:shadow-lg transition-shadow">
+                  {/* Post Image */}
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <Image
+                      src={post.featured_image || getPlaceholderImage(800, 400, post.title)}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {post.category && (
+                      <div className="absolute top-3 left-3">
+                        <Badge variant="gray">{post.category}</Badge>
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                {/* Post Content */}
-                <div className="p-5">
-                  <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-mb-warning transition-colors">
-                    <Link href={`/blog/${post.slug}`}>
-                      {post.title}
+                  {/* Post Content */}
+                  <div className="p-5">
+                    <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-mb-warning transition-colors">
+                      <Link href={`/blog/${post.slug}`}>
+                        {post.title}
+                      </Link>
+                    </h3>
+
+                    {post.excerpt && (
+                      <p className="text-sm text-mb-gray mb-3 line-clamp-2">
+                        {post.excerpt}
+                      </p>
+                    )}
+
+                    {/* Meta Information */}
+                    <div className="flex items-center gap-3 text-xs text-mb-gray border-t border-mb-border-gray pt-3">
+                      {post.author && (
+                        <>
+                          <div className="flex items-center gap-1.5">
+                            {post.author.avatar_url && (
+                              <Image
+                                src={post.author.avatar_url}
+                                alt={post.author.name}
+                                width={20}
+                                height={20}
+                                className="rounded-full"
+                              />
+                            )}
+                            <span>{post.author.name}</span>
+                          </div>
+                          <span>•</span>
+                        </>
+                      )}
+                      {post.read_time && <span>{post.read_time} min</span>}
+                    </div>
+
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="inline-block mt-3 text-sm text-mb-warning font-semibold hover:underline"
+                    >
+                      Read More →
                     </Link>
-                  </h3>
-
-                  <p className="text-sm text-mb-gray mb-3 line-clamp-2">
-                    {post.excerpt}
-                  </p>
-
-                  {/* Meta Information */}
-                  <div className="flex items-center gap-3 text-xs text-mb-gray border-t border-mb-border-gray pt-3">
-                    <span>{post.author}</span>
-                    <span>•</span>
-                    <span>{post.readTime} min</span>
                   </div>
-
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-block mt-3 text-sm text-mb-warning font-semibold hover:underline"
-                  >
-                    Read More →
-                  </Link>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-mb-gray text-center py-12">No blog posts available yet. Check back soon for exciting content!</p>
+          )}
 
-          {/* Load More Button */}
-          <div className="text-center mt-12">
-            <button className="px-8 py-3 border-2 border-mb-navy text-mb-navy rounded-mb font-semibold hover:bg-mb-navy hover:text-white transition-colors">
-              Load More Articles
-            </button>
-          </div>
+          {/* Load More Button - for future pagination */}
+          {blogPosts.length > 10 && (
+            <div className="text-center mt-12">
+              <button className="px-8 py-3 border-2 border-mb-navy text-mb-navy rounded-mb font-semibold hover:bg-mb-navy hover:text-white transition-colors">
+                Load More Articles
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

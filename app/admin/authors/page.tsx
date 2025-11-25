@@ -110,7 +110,12 @@ export default function AuthorsAdminPage() {
       email: author.email,
       avatar_url: author.avatar_url || '',
       bio: author.bio || '',
-      social_links: author.social_links || { twitter: '', linkedin: '', github: '', website: '' }
+      social_links: {
+        twitter: author.social_links?.twitter || '',
+        linkedin: author.social_links?.linkedin || '',
+        github: author.social_links?.github || '',
+        website: author.social_links?.website || ''
+      }
     })
     setEditingId(author.id)
   }

@@ -4,6 +4,13 @@ import fs from 'fs'
 import path from 'path'
 
 export async function POST(request: NextRequest) {
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     const { migrationFile } = await request.json()
 
@@ -77,6 +84,13 @@ export async function POST(request: NextRequest) {
 
 // Alternative: Execute SQL directly
 export async function PUT(request: NextRequest) {
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     const { sql } = await request.json()
 

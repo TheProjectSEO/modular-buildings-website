@@ -3,6 +3,13 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // GET - List all blog posts
 export async function GET(request: NextRequest) {
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams
     const limit = parseInt(searchParams.get('limit') || '50')
@@ -59,6 +66,13 @@ export async function GET(request: NextRequest) {
 
 // POST - Create new blog post
 export async function POST(request: NextRequest) {
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     const body = await request.json()
 

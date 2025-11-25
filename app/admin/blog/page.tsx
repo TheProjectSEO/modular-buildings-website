@@ -63,9 +63,9 @@ export default function BlogAdminPage() {
     custom_schema: {} as Record<string, any>,
     callouts: [] as Array<{
       type: 'info' | 'warning' | 'success' | 'error'
-      title: string
+      title?: string
       content: string
-      position: string
+      position?: string
     }>
   })
 

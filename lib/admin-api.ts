@@ -67,7 +67,13 @@ export interface Author {
   email: string
   avatar_url?: string
   bio?: string
-  social_links?: Record<string, string>
+  social_links?: {
+    twitter?: string
+    linkedin?: string
+    github?: string
+    website?: string
+    [key: string]: string | undefined
+  }
   created_at: string
   updated_at: string
 }

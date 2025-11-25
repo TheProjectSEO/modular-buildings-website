@@ -2,6 +2,13 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
 
 export async function POST() {
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     const results: any[] = []
 
@@ -106,6 +113,13 @@ export async function POST() {
 
 // GET endpoint to check status
 export async function GET() {
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 500 }
+    )
+  }
+
   try {
     // Check if tables exist
     const { error: authorsError } = await supabaseAdmin
