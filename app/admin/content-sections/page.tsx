@@ -22,7 +22,14 @@ import {
   ChevronUp,
   GripVertical
 } from 'lucide-react'
-import { supabase, ContentSection } from '@/lib/supabase'
+import {
+  getContentSections,
+  createContentSection,
+  updateContentSection,
+  deleteContentSection,
+  ContentSection
+} from '@/lib/admin-api'
+import { supabase } from '@/lib/supabase'
 
 // Simplified page type for the dropdown selection
 interface PageListItem {
@@ -78,22 +85,21 @@ export default function ContentSectionsPage() {
     setLoading(true)
     try {
       const [sectionsResult, pagesResult] = await Promise.all([
-        supabase
-          .from('content_sections')
-          .select('*, page:pages(id, title, slug)')
-          .order('page_id')
-          .order('sort_order'),
+        getContentSections(),
         supabase
           .from('pages')
-          .select('id, title, slug')
-          .order('title')
+          .select('id, meta_title, slug')
+          .order('meta_title')
       ])
 
-      if (sectionsResult.error) throw sectionsResult.error
       if (pagesResult.error) throw pagesResult.error
 
-      setSections(sectionsResult.data || [])
-      setPages(pagesResult.data || [])
+      setSections(sectionsResult.sections || [])
+      setPages((pagesResult.data || []).map(p => ({
+        id: p.id,
+        title: p.meta_title || p.slug,
+        slug: p.slug
+      })))
     } catch (err) {
       console.error('Error loading data:', err)
       setError('Failed to load content sections')
@@ -118,24 +124,17 @@ export default function ContentSectionsPage() {
 
     const maxOrder = sections.filter(s => s.page_id === formData.page_id).length
 
-    const { data, error } = await supabase
-      .from('content_sections')
-      .insert({
+    try {
+      const result = await createContentSection({
         page_id: formData.page_id,
         section_type: formData.section_type,
-        title: formData.title || null,
-        content: formData.content || null,
-        data: parsedData,
-        sort_order: maxOrder,
+        heading: formData.title || undefined,
+        content: parsedData,
+        order_index: maxOrder,
         is_active: formData.is_active
       })
-      .select('*, page:pages(id, title, slug)')
-      .single()
 
-    if (error) {
-      setError(error.message)
-    } else if (data) {
-      setSections([...sections, data])
+      setSections([...sections, result.section])
       setFormData({
         page_id: '',
         section_type: 'text',
@@ -145,6 +144,8 @@ export default function ContentSectionsPage() {
         is_active: true
       })
       setShowAddForm(false)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
@@ -157,55 +158,43 @@ export default function ContentSectionsPage() {
       return
     }
 
-    const { error } = await supabase
-      .from('content_sections')
-      .update({
+    try {
+      await updateContentSection(id, {
         section_type: formData.section_type,
-        title: formData.title || null,
-        content: formData.content || null,
-        data: parsedData,
-        is_active: formData.is_active,
-        updated_at: new Date().toISOString()
+        heading: formData.title || undefined,
+        content: parsedData,
+        is_active: formData.is_active
       })
-      .eq('id', id)
 
-    if (error) {
-      setError(error.message)
-    } else {
       setSections(sections.map(s => s.id === id ? {
         ...s,
         section_type: formData.section_type,
-        title: formData.title,
-        content: formData.content,
-        data: parsedData,
+        heading: formData.title,
+        content: parsedData,
         is_active: formData.is_active
       } : s))
       setEditingId(null)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from('content_sections')
-      .delete()
-      .eq('id', id)
-
-    if (error) {
-      setError(error.message)
-    } else {
+    try {
+      await deleteContentSection(id)
       setSections(sections.filter(s => s.id !== id))
       setDeleteConfirm(null)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
   const toggleActive = async (section: ContentSectionWithPage) => {
-    const { error } = await supabase
-      .from('content_sections')
-      .update({ is_active: !section.is_active, updated_at: new Date().toISOString() })
-      .eq('id', section.id)
-
-    if (!error) {
+    try {
+      await updateContentSection(section.id, { is_active: !section.is_active })
       setSections(sections.map(s => s.id === section.id ? { ...s, is_active: !s.is_active } : s))
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 

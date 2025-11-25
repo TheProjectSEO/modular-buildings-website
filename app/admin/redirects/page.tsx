@@ -17,7 +17,13 @@ import {
   Save,
   Edit
 } from 'lucide-react'
-import { supabase, Redirect } from '@/lib/supabase'
+import {
+  getRedirects,
+  createRedirect,
+  updateRedirect,
+  deleteRedirect,
+  Redirect
+} from '@/lib/admin-api'
 
 export default function RedirectsPage() {
   const [redirects, setRedirects] = useState<Redirect[]>([])
@@ -44,13 +50,8 @@ export default function RedirectsPage() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('redirects')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setRedirects(data || [])
+      const result = await getRedirects()
+      setRedirects(result.redirects || [])
     } catch (err) {
       console.error('Error loading data:', err)
       setError('Failed to load redirects')
@@ -71,21 +72,15 @@ export default function RedirectsPage() {
       ? formData.target_url
       : '/' + formData.target_url
 
-    const { data, error } = await supabase
-      .from('redirects')
-      .insert({
-        source_url: sourcePath,
-        target_url: targetPath,
+    try {
+      const result = await createRedirect({
+        source_path: sourcePath,
+        destination_path: targetPath,
         redirect_type: formData.redirect_type,
         is_active: formData.is_active
       })
-      .select()
-      .single()
 
-    if (error) {
-      setError(error.message)
-    } else if (data) {
-      setRedirects([data, ...redirects])
+      setRedirects([result.redirect, ...redirects])
       setFormData({
         source_url: '',
         target_url: '',
@@ -93,6 +88,8 @@ export default function RedirectsPage() {
         is_active: true
       })
       setShowAddForm(false)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
@@ -100,53 +97,43 @@ export default function RedirectsPage() {
     const redirect = redirects.find(r => r.id === id)
     if (!redirect) return
 
-    const { error } = await supabase
-      .from('redirects')
-      .update({
-        source_url: formData.source_url,
-        target_url: formData.target_url,
+    try {
+      await updateRedirect(id, {
+        source_path: formData.source_url,
+        destination_path: formData.target_url,
         redirect_type: formData.redirect_type,
-        is_active: formData.is_active,
-        updated_at: new Date().toISOString()
+        is_active: formData.is_active
       })
-      .eq('id', id)
 
-    if (error) {
-      setError(error.message)
-    } else {
       setRedirects(redirects.map(r => r.id === id ? {
         ...r,
-        source_url: formData.source_url,
-        target_url: formData.target_url,
+        source_path: formData.source_url,
+        destination_path: formData.target_url,
         redirect_type: formData.redirect_type,
         is_active: formData.is_active
       } : r))
       setEditingId(null)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from('redirects')
-      .delete()
-      .eq('id', id)
-
-    if (error) {
-      setError(error.message)
-    } else {
+    try {
+      await deleteRedirect(id)
       setRedirects(redirects.filter(r => r.id !== id))
       setDeleteConfirm(null)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
   const toggleActive = async (redirect: Redirect) => {
-    const { error } = await supabase
-      .from('redirects')
-      .update({ is_active: !redirect.is_active, updated_at: new Date().toISOString() })
-      .eq('id', redirect.id)
-
-    if (!error) {
+    try {
+      await updateRedirect(redirect.id, { is_active: !redirect.is_active })
       setRedirects(redirects.map(r => r.id === redirect.id ? { ...r, is_active: !r.is_active } : r))
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 

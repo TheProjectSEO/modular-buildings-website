@@ -22,7 +22,14 @@ import {
   X,
   FileText
 } from 'lucide-react'
-import { supabase, FAQ } from '@/lib/supabase'
+import {
+  getFAQs,
+  createFAQ,
+  updateFAQ,
+  deleteFAQ,
+  FAQ
+} from '@/lib/admin-api'
+import { supabase } from '@/lib/supabase'
 
 // Simplified page type for the dropdown selection
 interface PageListItem {
@@ -63,21 +70,21 @@ export default function FAQsPage() {
     setLoading(true)
     try {
       const [faqsResult, pagesResult] = await Promise.all([
-        supabase
-          .from('faqs')
-          .select('*, page:pages(id, title, slug)')
-          .order('created_at', { ascending: false }),
+        getFAQs(),
         supabase
           .from('pages')
-          .select('id, title, slug')
-          .order('title')
+          .select('id, meta_title, slug')
+          .order('meta_title')
       ])
 
-      if (faqsResult.error) throw faqsResult.error
       if (pagesResult.error) throw pagesResult.error
 
-      setFaqs(faqsResult.data || [])
-      setPages(pagesResult.data || [])
+      setFaqs(faqsResult.faqs || [])
+      setPages((pagesResult.data || []).map(p => ({
+        id: p.id,
+        title: p.meta_title || p.slug,
+        slug: p.slug
+      })))
     } catch (err) {
       console.error('Error loading data:', err)
       setError('Failed to load FAQs')
@@ -94,49 +101,40 @@ export default function FAQsPage() {
 
     const maxOrder = faqs.filter(f => f.page_id === formData.page_id).length
 
-    const { data, error } = await supabase
-      .from('faqs')
-      .insert({
-        ...formData,
-        order_index: maxOrder
+    try {
+      const result = await createFAQ({
+        page_id: formData.page_id,
+        question: formData.question,
+        answer: formData.answer,
+        order_index: maxOrder,
+        is_active: formData.is_active
       })
-      .select('*, page:pages(id, title, slug)')
-      .single()
 
-    if (error) {
-      setError(error.message)
-    } else if (data) {
-      setFaqs([data, ...faqs])
+      setFaqs([result.faq, ...faqs])
       setFormData({ page_id: '', question: '', answer: '', is_active: true })
       setShowAddForm(false)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
   const handleUpdate = async (id: string, updates: Partial<FAQ>) => {
-    const { error } = await supabase
-      .from('faqs')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-
-    if (error) {
-      setError(error.message)
-    } else {
+    try {
+      await updateFAQ(id, updates)
       setFaqs(faqs.map(f => f.id === id ? { ...f, ...updates } : f))
       setEditingFaq(null)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from('faqs')
-      .delete()
-      .eq('id', id)
-
-    if (error) {
-      setError(error.message)
-    } else {
+    try {
+      await deleteFAQ(id)
       setFaqs(faqs.filter(f => f.id !== id))
       setDeleteConfirm(null)
+    } catch (err: any) {
+      setError(err.message)
     }
   }
 
