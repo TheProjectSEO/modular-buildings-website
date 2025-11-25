@@ -61,6 +61,45 @@ export interface FAQ {
   updated_at: string
 }
 
+export interface Author {
+  id: string
+  name: string
+  email: string
+  avatar_url?: string
+  bio?: string
+  social_links?: Record<string, string>
+  created_at: string
+  updated_at: string
+}
+
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt?: string
+  content: string
+  author_id?: string
+  author?: Author
+  category?: string
+  featured_image?: string
+  is_featured: boolean
+  is_published: boolean
+  published_at?: string
+  updated_at: string
+  created_at: string
+  read_time?: number
+  seo_title?: string
+  seo_description?: string
+  faq_schema?: Array<{ question: string; answer: string }>
+  custom_schema?: Record<string, any>
+  callouts?: Array<{
+    type: 'info' | 'warning' | 'success' | 'error'
+    title?: string
+    content: string
+    position?: string
+  }>
+}
+
 // Pages API
 export async function getPages(options?: {
   page_type?: string
@@ -385,6 +424,192 @@ export async function deleteFAQ(id: string): Promise<{ success: boolean }> {
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.error || 'Failed to delete FAQ')
+  }
+  return response.json()
+}
+
+// Authors API
+export async function getAuthors(options?: {
+  search?: string
+  limit?: number
+  offset?: number
+}): Promise<{ authors: Author[]; total: number }> {
+  const params = new URLSearchParams()
+  if (options?.search) params.append('search', options.search)
+  if (options?.limit) params.append('limit', options.limit.toString())
+  if (options?.offset) params.append('offset', options.offset.toString())
+
+  const response = await fetch(`/api/admin/authors?${params.toString()}`)
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to fetch authors')
+  }
+  return response.json()
+}
+
+export async function getAuthor(id: string): Promise<{ author: Author; post_count: number }> {
+  const response = await fetch(`/api/admin/authors/${id}`)
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to fetch author')
+  }
+  return response.json()
+}
+
+export async function createAuthor(data: {
+  name: string
+  email: string
+  avatar_url?: string
+  bio?: string
+  social_links?: Record<string, string>
+}): Promise<{ author: Author }> {
+  const response = await fetch('/api/admin/authors', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to create author')
+  }
+  return response.json()
+}
+
+export async function updateAuthor(
+  id: string,
+  data: Partial<{
+    name: string
+    email: string
+    avatar_url: string
+    bio: string
+    social_links: Record<string, string>
+  }>
+): Promise<{ author: Author }> {
+  const response = await fetch(`/api/admin/authors/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to update author')
+  }
+  return response.json()
+}
+
+export async function deleteAuthor(id: string): Promise<{ success: boolean }> {
+  const response = await fetch(`/api/admin/authors/${id}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to delete author')
+  }
+  return response.json()
+}
+
+// Blog Posts API
+export async function getBlogPosts(options?: {
+  is_published?: boolean
+  category?: string
+  search?: string
+  limit?: number
+  offset?: number
+}): Promise<{ posts: BlogPost[]; total: number }> {
+  const params = new URLSearchParams()
+  if (options?.is_published !== undefined) params.append('is_published', options.is_published.toString())
+  if (options?.category) params.append('category', options.category)
+  if (options?.search) params.append('search', options.search)
+  if (options?.limit) params.append('limit', options.limit.toString())
+  if (options?.offset) params.append('offset', options.offset.toString())
+
+  const response = await fetch(`/api/admin/blog-posts?${params.toString()}`)
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to fetch blog posts')
+  }
+  return response.json()
+}
+
+export async function getBlogPost(id: string): Promise<{ post: BlogPost }> {
+  const response = await fetch(`/api/admin/blog-posts/${id}`)
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to fetch blog post')
+  }
+  return response.json()
+}
+
+export async function createBlogPost(data: {
+  title: string
+  slug: string
+  excerpt?: string
+  content: string
+  author_id?: string
+  category?: string
+  featured_image?: string
+  is_featured?: boolean
+  is_published?: boolean
+  published_at?: string
+  read_time?: number
+  seo_title?: string
+  seo_description?: string
+  faq_schema?: Array<{ question: string; answer: string }>
+  custom_schema?: Record<string, any>
+  callouts?: Array<any>
+}): Promise<{ post: BlogPost }> {
+  const response = await fetch('/api/admin/blog-posts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to create blog post')
+  }
+  return response.json()
+}
+
+export async function updateBlogPost(
+  id: string,
+  data: Partial<{
+    title: string
+    slug: string
+    excerpt: string
+    content: string
+    author_id: string
+    category: string
+    featured_image: string
+    is_featured: boolean
+    is_published: boolean
+    published_at: string
+    read_time: number
+    seo_title: string
+    seo_description: string
+    faq_schema: Array<{ question: string; answer: string }>
+    custom_schema: Record<string, any>
+    callouts: Array<any>
+  }>
+): Promise<{ post: BlogPost }> {
+  const response = await fetch(`/api/admin/blog-posts/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to update blog post')
+  }
+  return response.json()
+}
+
+export async function deleteBlogPost(id: string): Promise<{ success: boolean }> {
+  const response = await fetch(`/api/admin/blog-posts/${id}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to delete blog post')
   }
   return response.json()
 }
