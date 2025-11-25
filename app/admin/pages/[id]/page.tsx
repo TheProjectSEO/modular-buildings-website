@@ -28,7 +28,8 @@ import {
   Plus,
   Trash2,
   GripVertical,
-  CheckCircle
+  CheckCircle,
+  Link2
 } from 'lucide-react'
 import {
   getPage,
@@ -49,6 +50,7 @@ import {
 } from '@/lib/supabase'
 import { logUpdate, logCreate, logDelete, getUserInfoForAudit } from '@/lib/audit-utils'
 import { useAuth } from '@/components/admin/AuthWrapper'
+import RecommendedLinks from '@/components/internal-linking/RecommendedLinks'
 
 export default function EditPagePage() {
   const router = useRouter()
@@ -63,7 +65,7 @@ export default function EditPagePage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'og' | 'faqs' | 'schema'>('content')
+  const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'og' | 'faqs' | 'schema' | 'links'>('content')
 
   // Form state
   const [formData, setFormData] = useState({
@@ -264,7 +266,8 @@ export default function EditPagePage() {
     { id: 'seo', label: 'SEO', icon: Search },
     { id: 'og', label: 'Open Graph', icon: Globe },
     { id: 'faqs', label: `FAQs (${faqs.length})`, icon: HelpCircle },
-    { id: 'schema', label: `Schema (${schemas.length})`, icon: Code }
+    { id: 'schema', label: `Schema (${schemas.length})`, icon: Code },
+    { id: 'links', label: 'Internal Links', icon: Link2 }
   ]
 
   if (loading) {
@@ -621,6 +624,26 @@ export default function EditPagePage() {
                         </Button>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {activeTab === 'links' && (
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                      <p className="text-sm text-blue-800">
+                        <Info className="h-4 w-4 inline mr-1" />
+                        Internal link recommendations are based on content similarity using TF-IDF analysis.
+                        Make sure your content is indexed in the <Link href="/admin/internal-linking" className="underline">Internal Linking dashboard</Link>.
+                      </p>
+                    </div>
+
+                    <RecommendedLinks
+                      pageId={pageId}
+                      limit={10}
+                      minSimilarity={0.2}
+                      showScores={true}
+                      className="mt-4"
+                    />
                   </div>
                 )}
               </CardContent>

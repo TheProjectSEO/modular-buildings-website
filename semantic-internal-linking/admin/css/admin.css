@@ -1,0 +1,228 @@
+/**
+ * Semantic Internal Linking - Admin Styles
+ *
+ * @package Semantic_Internal_Linking
+ * @since   1.0.0
+ */
+
+/* Admin wrapper */
+.seil-admin-wrap {
+	max-width: 800px;
+}
+
+.seil-admin-wrap h1 {
+	margin-bottom: 5px;
+}
+
+.seil-admin-wrap > .description {
+	margin-bottom: 20px;
+	font-size: 14px;
+	color: #666;
+}
+
+/* Statistics Box */
+.seil-stats-box {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.seil-stats-box h2 {
+	margin-top: 0;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.seil-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.seil-stat {
+	text-align: center;
+	padding: 15px;
+	background: #f9f9f9;
+	border-radius: 4px;
+}
+
+.seil-stat-value {
+	display: block;
+	font-size: 28px;
+	font-weight: 600;
+	color: #0073aa;
+	line-height: 1.2;
+}
+
+.seil-stat-label {
+	display: block;
+	font-size: 12px;
+	color: #666;
+	margin-top: 5px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+/* Index Actions */
+.seil-index-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 15px;
+}
+
+.seil-index-actions .spinner {
+	float: none;
+	margin: 0;
+}
+
+/* Progress Bar */
+#seil-progress-container {
+	margin-top: 15px;
+}
+
+.seil-progress-bar {
+	height: 20px;
+	background: #e0e0e0;
+	border-radius: 10px;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+.seil-progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #0073aa, #00a0d2);
+	border-radius: 10px;
+	transition: width 0.3s ease;
+}
+
+.seil-progress-text {
+	font-size: 13px;
+	color: #666;
+	margin: 0;
+}
+
+/* Range Input */
+.seil-range {
+	width: 200px;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+#seil_threshold_value {
+	font-weight: 600;
+	color: #0073aa;
+}
+
+/* Shortcode Info Box */
+.seil-shortcode-info {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px;
+	margin-top: 20px;
+}
+
+.seil-shortcode-info h2 {
+	margin-top: 0;
+	margin-bottom: 15px;
+}
+
+.seil-shortcode-info code {
+	display: inline-block;
+	background: #f0f0f0;
+	padding: 8px 15px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.seil-shortcode-info ul {
+	margin-top: 10px;
+	margin-bottom: 0;
+}
+
+.seil-shortcode-info ul li {
+	margin-bottom: 5px;
+}
+
+.seil-shortcode-info ul code {
+	padding: 2px 6px;
+	font-size: 12px;
+}
+
+/* Post Types List */
+.seil-post-types-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.seil-post-types-list label {
+	display: block;
+	margin-bottom: 8px;
+	cursor: pointer;
+}
+
+.seil-post-types-list label:last-child {
+	margin-bottom: 0;
+}
+
+.seil-post-types-list input[type="checkbox"] {
+	margin-right: 8px;
+}
+
+/* Form Styles */
+.form-table th {
+	width: 200px;
+}
+
+.form-table td p.description {
+	margin-top: 5px;
+	font-size: 12px;
+}
+
+/* Color Picker */
+.seil-color-picker {
+	width: 100px;
+}
+
+.form-table .wp-picker-container {
+	display: inline-block;
+}
+
+.form-table .wp-picker-container .wp-color-result.button {
+	margin-right: 10px;
+}
+
+.form-table .wp-picker-input-wrap label {
+	margin-right: 5px;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+	.seil-stats-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.seil-index-actions {
+		flex-wrap: wrap;
+	}
+
+	.seil-range {
+		width: 100%;
+		margin-bottom: 10px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.seil-stats-grid {
+		grid-template-columns: 1fr;
+	}
+}

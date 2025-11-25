@@ -1,0 +1,105 @@
+/**
+ * Semantic Internal Linking - Public Styles
+ *
+ * Uses CSS custom properties for easy customization.
+ * Default values inherit from the WordPress theme.
+ *
+ * @package Semantic_Internal_Linking
+ * @since   1.0.0
+ */
+
+/* CSS Custom Properties - Defaults inherit from theme */
+.seil-related-content {
+	--seil-bg-color: transparent;
+	--seil-border-color: currentColor;
+	--seil-border-width: 1px;
+	--seil-border-radius: 4px;
+	--seil-heading-color: inherit;
+	--seil-heading-size: 1.2em;
+	--seil-text-color: inherit;
+	--seil-link-color: inherit;
+	--seil-link-hover-color: inherit;
+	--seil-spacing: 20px;
+}
+
+/* Related Content Container */
+.seil-related-content {
+	margin: 30px 0;
+	padding: var(--seil-spacing);
+	background: var(--seil-bg-color);
+	border: var(--seil-border-width) solid var(--seil-border-color);
+	border-radius: var(--seil-border-radius);
+	color: var(--seil-text-color);
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+/* Heading */
+.seil-related-heading {
+	margin: 0 0 15px 0;
+	padding: 0 0 10px 0;
+	font-size: var(--seil-heading-size);
+	font-weight: 600;
+	font-family: inherit;
+	color: var(--seil-heading-color);
+	border-bottom: 2px solid var(--seil-border-color);
+}
+
+/* Related List */
+.seil-related-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Related Items */
+.seil-related-item {
+	margin: 0 0 10px 0;
+	padding: 0 0 0 20px;
+	position: relative;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.seil-related-item:last-child {
+	margin-bottom: 0;
+}
+
+.seil-related-item::before {
+	content: "\2192"; /* Arrow character */
+	position: absolute;
+	left: 0;
+	top: 0;
+	color: var(--seil-text-color);
+	opacity: 0.6;
+}
+
+/* Related Links - Inherit from theme's link styles */
+.seil-related-link {
+	color: var(--seil-link-color);
+	text-decoration: none;
+	transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.seil-related-link:hover,
+.seil-related-link:focus {
+	color: var(--seil-link-hover-color);
+	text-decoration: underline;
+	opacity: 0.8;
+}
+
+/* Print Styles */
+@media print {
+	.seil-related-content {
+		border: 1px solid #000;
+		background: none;
+		page-break-inside: avoid;
+	}
+
+	.seil-related-link {
+		color: #000;
+		text-decoration: underline;
+	}
+}
