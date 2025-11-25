@@ -50,7 +50,7 @@ export async function PUT(
 
   try {
     const body = await request.json()
-    const { page_type_id, slug, meta_title, meta_description, content, is_active } = body
+    const { page_type_id, slug, title, meta_title, meta_description, content, status } = body
 
     const updateData: any = {
       updated_at: new Date().toISOString(),
@@ -58,10 +58,11 @@ export async function PUT(
 
     if (page_type_id !== undefined) updateData.page_type_id = page_type_id
     if (slug !== undefined) updateData.slug = slug
+    if (title !== undefined) updateData.title = title
     if (meta_title !== undefined) updateData.meta_title = meta_title
     if (meta_description !== undefined) updateData.meta_description = meta_description
     if (content !== undefined) updateData.content = content
-    if (is_active !== undefined) updateData.is_active = is_active
+    if (status !== undefined) updateData.status = status
 
     const { data, error } = await supabaseAdmin
       .from('pages')

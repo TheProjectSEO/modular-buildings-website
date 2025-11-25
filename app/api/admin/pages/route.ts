@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { page_type_id, slug, meta_title, meta_description, content, is_active } = body
+    const { page_type_id, slug, meta_title, meta_description, content, status, title } = body
 
     if (!page_type_id || !slug) {
       return NextResponse.json(
@@ -65,10 +65,14 @@ export async function POST(request: NextRequest) {
       .insert({
         page_type_id,
         slug,
+        title: title || slug,
         meta_title,
         meta_description,
         content,
-        is_active: is_active ?? true,
+        status: status || 'draft',
+        sort_order: 0,
+        is_featured: false,
+        view_count: 0
       })
       .select('*, page_type:page_types(name, slug)')
       .single()
