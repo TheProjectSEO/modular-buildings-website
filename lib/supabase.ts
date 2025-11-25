@@ -336,7 +336,11 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
     .single()
 
   if (error) {
-    console.error('Error fetching page by slug:', error)
+    // Silently handle missing pages during static generation
+    // Only log actual errors (not "no rows" errors)
+    if (error.code !== 'PGRST116') {
+      console.error('Error fetching page by slug:', error)
+    }
     return null
   }
 

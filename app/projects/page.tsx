@@ -20,7 +20,11 @@ async function getProjects() {
     .order('completion_date', { ascending: false })
 
   if (error) {
-    console.error('Error fetching projects:', error)
+    // Silently handle if projects table doesn't exist yet
+    // Will use mock data as fallback
+    if (error.code !== 'PGRST205') {
+      console.error('Error fetching projects:', error)
+    }
     return []
   }
 

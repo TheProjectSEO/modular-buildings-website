@@ -79,7 +79,10 @@ async function getProjectsUsingProduct(productId: string) {
     .limit(4)
 
   if (error) {
-    console.error('Error fetching projects:', error)
+    // Silently handle if projects table doesn't exist yet
+    if (error.code !== 'PGRST205') {
+      console.error('Error fetching projects:', error)
+    }
     return []
   }
 
