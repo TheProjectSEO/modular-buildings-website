@@ -137,10 +137,11 @@ export async function getPage(id: string): Promise<{ page: Page }> {
 export async function createPage(data: {
   page_type_id: string
   slug: string
+  title?: string
   meta_title?: string
   meta_description?: string
   content?: any
-  is_active?: boolean
+  status?: 'draft' | 'published' | 'archived'
 }): Promise<{ page: Page }> {
   const response = await fetch('/api/admin/pages', {
     method: 'POST',
@@ -159,10 +160,11 @@ export async function updatePage(
   data: Partial<{
     page_type_id: string
     slug: string
+    title: string
     meta_title: string
     meta_description: string
     content: any
-    is_active: boolean
+    status: 'draft' | 'published' | 'archived'
   }>
 ): Promise<{ page: Page }> {
   const response = await fetch(`/api/admin/pages/${id}`, {

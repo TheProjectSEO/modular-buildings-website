@@ -145,11 +145,12 @@ export default function EditPagePage() {
       const oldPageData = page ? { ...page } : null
       const result = await updatePage(pageId, {
         slug: formData.slug,
+        title: formData.title,
         page_type_id: formData.page_type_id,
         meta_title: formData.meta_title,
         meta_description: formData.meta_description,
         content: formData.content,
-        is_active: formData.status === 'published'
+        status: formData.status
       })
 
       if (result.page) {
